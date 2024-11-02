@@ -7,10 +7,6 @@ const http = require('http');
 const socketIo = require('socket.io');
 const axios = require('axios');
 
-//test
-console.log('API Key:', process.env.OPENAI_API_KEY);
-//test
-
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
@@ -30,24 +26,26 @@ io.on('connection', (socket) => {
         users[socket.id] = username; // Store the username with the socket ID
         io.emit('message', `${username} has joined the chat`);
         console.log(`${username} connected`);
-
-        // Send the username to the specific client who just connected
         socket.emit('your-username', username);
     });
 
     // Listen for 'message' event from the client
     socket.on('message', async (message) => {
-        const username = users[socket.id]; // Get the username for this socket
+        const username = users[socket.id];
         console.log(`Message received from ${username}:`, message);
         io.emit('message', `${username} said: ${message}`);
 
-        // Call OpenAI API to get a response
         try {
             const response = await getOpenAIResponse(message);
-            io.emit('message', response); // Send the response directly to users without prefix
+            io.emit('message', response);
         } catch (error) {
             console.error('Error fetching OpenAI response:', error);
-            io.emit('message', 'Error: Could not retrieve response from OpenAI.');
+
+            if (error.response && error.response.status === 429) {
+                io.emit('message', 'Error: Rate limit exceeded. Please try again later.');
+            } else {
+                io.emit('message', 'Error: Could not retrieve response from OpenAI.');
+            }
         }
     });
 
@@ -56,22 +54,19 @@ io.on('connection', (socket) => {
         const username = users[socket.id];
         console.log(`${username} disconnected`);
         io.emit('message', `${username} has left the chat`);
-        delete users[socket.id]; // Clean up the username
+        delete users[socket.id];
     });
 });
 
 // Function to call OpenAI API
 async function getOpenAIResponse(userMessage) {
-    const apiKey = process.env.OPENAI_API_KEY; // Access the API key from environment variables
+    const apiKey = process.env.OPENAI_API_KEY;
 
-    // Customize your prompt here to request a response in the style of Shakespeare
     const prompt = `Respond to the following message as Shakespeare:\nUser message: ${userMessage}`;
 
     const response = await axios.post('https://api.openai.com/v1/chat/completions', {
-        model: "gpt-3.5-turbo", // Specify the model
-        messages: [
-            { role: "user", content: prompt } // Send the customized prompt
-        ],
+        model: "gpt-3.5-turbo",
+        messages: [{ role: "user", content: prompt }],
     }, {
         headers: {
             'Authorization': `Bearer ${apiKey}`,
@@ -79,7 +74,7 @@ async function getOpenAIResponse(userMessage) {
         },
     });
 
-    return response.data.choices[0].message.content; // Return the response from OpenAI
+    return response.data.choices[0].message.content;
 }
 
 server.listen(8080, () => {
