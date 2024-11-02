@@ -1,6 +1,12 @@
 const socket = io('http://localhost:8080');
 console.log('Connecting to Socket.IO...');
 
+// Prompt the user for their username
+const username = prompt("Enter your username:");
+
+// Emit the username to the server
+socket.emit('set-username', username);
+
 // Display the username of the connected user
 socket.on('your-username', (username) => {
     const userInfo = document.createElement('p');
