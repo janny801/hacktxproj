@@ -66,7 +66,7 @@ async function getOpenAIResponse(userMessage) {
 
     try {
         const response = await axios.post('https://api.openai.com/v1/chat/completions', {
-            model: "gpt-3.5-turbo", // Use the correct model name here
+            model: "gpt-4o", // Use the correct model name here
             messages: [{ role: "user", content: prompt }],
         }, {
             headers: {
