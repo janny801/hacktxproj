@@ -1,0 +1,77 @@
+/* Apply styles to the entire body with dark background */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #2c2c2c;  /* Dark grey background */
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    color: #fff; /* Light text color */
+}
+
+/* Style for the chat container */
+ul {
+    list-style-type: none;
+    padding: 0;
+    width: 30%;  /* Default width */
+    height: 200px;  /* Default height */
+    max-height: none;  /* Remove max-height restriction */
+    overflow-y: auto;
+    border: 1px solid #444;  /* Darker border */
+    border-radius: 5px;
+    background-color: #3e3e3e;  /* Slightly lighter dark background */
+    margin-bottom: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    resize: both;  /* Allow resizing both vertically and horizontally */
+    min-width: 200px;  /* Set a minimum width */
+    min-height: 100px; /* Set a minimum height */
+}
+
+/* Style for individual messages */
+ul li {
+    padding: 8px;  /* Slightly smaller padding */
+    border-bottom: 1px solid #555;
+}
+
+ul li:last-child {
+    border-bottom: none;
+}
+
+/* Style the input and button container */
+input, button {
+    padding: 8px;  /* Smaller padding */
+    font-size: 14px;  /* Smaller font size */
+    border: 1px solid #555;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+/* Style the input field */
+input {
+    width: 200px;  /* Smaller input box */
+    background-color: #3e3e3e;
+    color: #fff;
+}
+
+/* Style the send button */
+button {
+    background-color: #5a67d8;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #4c51bf;
+}
+
+/* Style the input field and button container */
+form {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;  /* Reduce the margin above the button */
+}
