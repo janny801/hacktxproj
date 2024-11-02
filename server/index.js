@@ -1,6 +1,6 @@
 require('dotenv').config(); // Load environment variables
 console.log('All Environment Variables:', process.env); // Log all environment variables
-console.log('API Key Loaded:', process.env.OPENAI_API_KEY); // Log the specific API key
+//console.log('API Key Loaded:', process.env.OPENAI_API_KEY); // Log the specific API key
 
 const express = require('express');
 const http = require('http');
