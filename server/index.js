@@ -101,7 +101,7 @@ async function getOpenAIResponse(input, type) {
   } else if (type === "pdf") {
     prompt = `Summarize the following PDF content with concise paragraphs. Separate different topics or sections with new lines to make it easy to read in the chat:\n${input}`;
   } else if (type === "image") {
-    prompt = "Describe the contents of this image in a detailed Shakespearean manner.";
+    prompt = `Describe the contents of this image"\n${input}`;
   }
 
   try {
