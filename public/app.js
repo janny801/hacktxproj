@@ -33,7 +33,7 @@ socket.on('ai-message', (data) => {
     loadingSpinner.style.display = 'none'; // Hide spinner
 
     const li = document.createElement('li');
-    li.classList.add("left-message"); // Apply left-side styling for AI messages
+    li.classList.add("ai-message"); // Apply left-side styling for AI messages
     li.innerHTML = data.content.replace(/\n/g, '<br>');
     messageList.appendChild(li);
     messageList.scrollTop = messageList.scrollHeight; // Auto-scroll to the bottom
@@ -72,20 +72,27 @@ sendButton.addEventListener('click', () => {
     const message = messageInput.value.trim();
     if (message) {
         const li = document.createElement('li');
-        li.classList.add("right-message"); // Apply right-side styling for user messages
+        li.classList.add("user-message"); // Apply right-side styling for user messages
         li.innerHTML = `${username}: ${message}`; // Display the username instead of "You"
         messageList.appendChild(li);
         messageList.scrollTop = messageList.scrollHeight; // Auto-scroll to the bottom
 
-        socket.emit('message', message);
+        // Send the message data to the server with sender information
+        socket.emit('message', { sender: username, content: message });
         messageInput.value = '';
     }
 });
 
-// Listen for user messages from the server and apply left styling
+// Listen for user messages from the server and apply appropriate styling
 socket.on('user-message', (data) => {
     const li = document.createElement('li');
-    li.classList.add("right-message"); // Apply right-side styling for user messages
+    // If the message is from the current user, apply user-message styling
+    if (data.sender === username) {
+        li.classList.add("user-message");
+    } else {
+        // For other users or AI, apply ai-message styling
+        li.classList.add("ai-message");
+    }
     li.innerHTML = `${data.sender}: ${data.content}`;
     messageList.appendChild(li);
     messageList.scrollTop = messageList.scrollHeight; // Auto-scroll to the bottom
@@ -130,7 +137,7 @@ dropZone.addEventListener("drop", (e) => {
 
         // Display the file name in the chat
         const li = document.createElement("li");
-        li.classList.add("right-message"); // Apply right-side styling for user upload messages
+        li.classList.add("user-message"); // Apply right-side styling for user upload messages
         li.textContent = `Uploading: ${file.name}`;
         messageList.appendChild(li);
 

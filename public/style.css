@@ -69,18 +69,9 @@ body {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
-/* Message styles for alternating alignment */
-#message-list li:nth-child(odd) {
-    background-color: #4c51bf; /* Color for left-aligned messages */
-    align-self: flex-start; /* Align messages to the left */
-    border-top-left-radius: 0; /* Customize border-radius */
-}
 
-#message-list li:nth-child(even) {
-    background-color: gray; /* Color for right-aligned messages */
-    align-self: flex-end; /* Align messages to the right */
-    border-top-right-radius: 0; /* Customize border-radius */
-}
+
+
 
 /* Input and Button */
 form {
@@ -317,26 +308,26 @@ button:hover {
 }
 
 
-/* Style for user messages */
+/* Style for user messages (right-aligned) */
 .user-message {
     background-color: gray;
-    align-self: flex-end;
     color: #fff;
     padding: 10px;
     border-radius: 10px;
     margin: 5px 0;
     max-width: 60%;
+    align-self: flex-end; /* Right-align user messages */
 }
 
-/* Style for AI messages */
+/* Style for AI messages (left-aligned) */
 .ai-message {
     background-color: #4c51bf;
-    align-self: flex-start;
     color: #fff;
     padding: 10px;
     border-radius: 10px;
     margin: 5px 0;
     max-width: 60%;
+    align-self: flex-start; /* Left-align AI messages */
 }
 
 

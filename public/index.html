@@ -17,13 +17,13 @@
 </head>
 <body>
     <!-- Title Section -->
-    <div class="title">ai chat app and pdf summarizer</div>
+    <div class="title">AI Chat App and PDF Summarizer</div>
 
     <!-- Username Overlay Section -->
     <div id="username-overlay">
         <div id="username-container">
             <h2>Enter your Username</h2>
-            <input type="text" id="username-input" placeholder="Enter username">
+            <input type="text" id="username-input" placeholder="Enter username" autocomplete="off">
             <button id="username-submit">Submit</button>
         </div>
     </div>
@@ -34,10 +34,11 @@
         <!-- Chat Section -->
         <div class="chat-section">
             <ul id="message-list"></ul>
-            <div class="input-container">
-                <input id="message-input" placeholder="Type a message" disabled>
+            <!-- Use a form element for the message input -->
+            <form class="input-container" onsubmit="return false;">
+                <input id="message-input" placeholder="Type a message" disabled autocomplete="off">
                 <button id="send-button" disabled>Send</button>
-            </div>
+            </form>
         </div>
 
         <!-- Image Display Section -->
