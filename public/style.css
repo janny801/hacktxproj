@@ -77,7 +77,7 @@ body {
 }
 
 #message-list li:nth-child(even) {
-    background-color: #5a67d8; /* Color for right-aligned messages */
+    background-color: gray; /* Color for right-aligned messages */
     align-self: flex-end; /* Align messages to the right */
     border-top-right-radius: 0; /* Customize border-radius */
 }
