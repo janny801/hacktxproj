@@ -55,6 +55,31 @@ body {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     color: #fff;
     resize: both;
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Space between messages */
+}
+
+/* Alternating message styles */
+#message-list li {
+    padding: 8px 12px;
+    max-width: 70%;
+    border-radius: 10px;
+    color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Message styles for alternating alignment */
+#message-list li:nth-child(odd) {
+    background-color: #4c51bf; /* Color for left-aligned messages */
+    align-self: flex-start; /* Align messages to the left */
+    border-top-left-radius: 0; /* Customize border-radius */
+}
+
+#message-list li:nth-child(even) {
+    background-color: #5a67d8; /* Color for right-aligned messages */
+    align-self: flex-end; /* Align messages to the right */
+    border-top-right-radius: 0; /* Customize border-radius */
 }
 
 /* Input and Button */
