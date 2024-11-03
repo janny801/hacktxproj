@@ -1,6 +1,6 @@
 require("dotenv").config(); // Load environment variables
 
-console.log("API Key Loaded:", process.env.OPENAI_API_KEY); // Log the specific API key
+//console.log("API Key Loaded:", process.env.OPENAI_API_KEY); // Log the specific API key
 
 const express = require("express");
 const http = require("http");
@@ -105,11 +105,11 @@ app.post("/upload", upload.single("file"), async (req, res) => {
 async function getOpenAIResponse(input, type) {
   let prompt;
   if (type === "text") {
-    prompt = `Respond to the following message as if you are a good helpful friend:\nUser message: ${input}`;
+    prompt = `repsond to the user as if you are a teacher, or an older student or a mentor of some sort. do anything you can do to help, all in good favor:\nUser message: ${input}`;
   } else if (type === "pdf") {
-    prompt = `Summarize the following PDF content with concise paragraphs. Separate different topics or sections with new lines to make it easy to read in the chat:\n${input}`;
+    prompt = `Summarize the following PDF content with concise sentences or statements. Separate different topics or sections with new lines to make it easy to read in the chat. preferably make your response shorter and then ask the user if they would like to elaborate on something specific within that file:\n${input}`;
   } else if (type === "image") {
-    prompt = `Describe the contents of this image"\n${input}`;
+    prompt = `say something like you arent able to view images but you can send a pdf i would be glad to review it with you\n${input}`;
   }
 
   try {
