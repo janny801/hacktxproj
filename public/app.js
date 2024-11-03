@@ -37,27 +37,35 @@ socket.on('message', (message) => {
 });
 
 
-
 // Drag and Drop File Upload
 const dropZone = document.getElementById("drop-zone");
+const messageList = document.querySelector("ul"); // Renamed 'ul' to 'messageList'
 
+// Prevent default browser behavior for drag-and-drop events at the document level
 document.addEventListener("dragover", (e) => {
     e.preventDefault();
     dropZone.classList.add("drag-over");
 });
 
 document.addEventListener("dragleave", (e) => {
+    e.preventDefault();
     dropZone.classList.remove("drag-over");
 });
 
-dropZone.addEventListener("drop", (e) => {
+document.addEventListener("drop", (e) => {
     e.preventDefault();
     dropZone.classList.remove("drag-over");
 
     const files = e.dataTransfer.files;
     if (files.length) {
+        const file = files[0];
         const formData = new FormData();
-        formData.append("file", files[0]);
+        formData.append("file", file);
+
+        // Display the file name in the chat
+        const li = document.createElement("li");
+        li.textContent = `Uploading: ${file.name}`;
+        messageList.appendChild(li);
 
         fetch("/upload", {
             method: "POST",
@@ -65,11 +73,13 @@ dropZone.addEventListener("drop", (e) => {
         })
         .then(response => response.text())
         .then(message => {
+            // Update the message once the file is successfully uploaded
+            li.textContent = `Uploaded: ${file.name}`;
             console.log(message);
-            const li = document.createElement("li");
-            li.textContent = message;
-            document.querySelector("ul").appendChild(li);
         })
-        .catch(error => console.error("File upload failed:", error));
+        .catch(error => {
+            console.error("File upload failed:", error);
+            li.textContent = `Failed to upload: ${file.name}`;
+        });
     }
 });
