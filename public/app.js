@@ -35,3 +35,41 @@ socket.on('message', (message) => {
     li.textContent = message;
     ul.appendChild(li);
 });
+
+
+
+// Drag and Drop File Upload
+const dropZone = document.getElementById("drop-zone");
+
+dropZone.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    dropZone.classList.add("drag-over");
+});
+
+dropZone.addEventListener("dragleave", () => {
+    dropZone.classList.remove("drag-over");
+});
+
+dropZone.addEventListener("drop", (e) => {
+    e.preventDefault();
+    dropZone.classList.remove("drag-over");
+
+    const files = e.dataTransfer.files;
+    if (files.length) {
+        const formData = new FormData();
+        formData.append("file", files[0]);
+
+        fetch("/upload", {
+            method: "POST",
+            body: formData
+        })
+        .then(response => response.text())
+        .then(message => {
+            console.log(message);
+            const li = document.createElement("li");
+            li.textContent = message;
+            ul.appendChild(li);
+        })
+        .catch(error => console.error("File upload failed:", error));
+    }
+});

@@ -8,14 +8,31 @@ console.log("API KEY: " ,apiKey); //display api key
 
 const express = require('express');
 const http = require('http');
+const multer = require('multer');
+
 const socketIo = require('socket.io');
 const axios = require('axios');
+const upload = multer({ dest: 'uploads/' }); // Save files to the "uploads" directory
+
 
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
     cors: { origin: "*" }
 });
+
+
+// Handle file upload
+app.post('/upload', upload.single('file'), (req, res) => {
+    if (req.file) {
+        console.log('File received:', req.file.originalname);
+        res.send('File received');
+    } else {
+        res.status(400).send('No file uploaded');
+    }
+});
+
+
 
 // Track connected users
 let users = {};
