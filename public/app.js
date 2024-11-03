@@ -38,13 +38,18 @@ socket.on('message', (message) => {
 
 
 // Drag and Drop File Upload
-
 const dropZone = document.getElementById("drop-zone");
 const messageList = document.getElementById("message-list");
 const imageSection = document.getElementById("image-section");
 const imageContainer = document.getElementById("image-container");
 
-// Prevent default browser behavior for drag-and-drop events at the document level
+// Add placeholder text initially
+const placeholderText = document.createElement("p");
+placeholderText.className = "placeholder";
+placeholderText.textContent = "Upload image here";
+imageContainer.appendChild(placeholderText);
+
+// Handle drag and drop events to change appearance
 document.addEventListener("dragover", (e) => {
     e.preventDefault();
     imageSection.classList.add("drag-over"); // Darken the image section
@@ -79,14 +84,23 @@ document.addEventListener("drop", (e) => {
             if (data.url) {  // Server response with the file URL
                 li.textContent = `Uploaded: ${file.name}`;
 
-                // Clear any previous image and display the new one
-                imageContainer.innerHTML = ''; // Remove existing image/link
+                // Clear the image container and remove placeholder text
+                imageContainer.innerHTML = ''; // Clear previous content
+                
+                // Display the image
                 if (file.type.startsWith("image/")) {
                     const img = document.createElement("img");
                     img.src = data.url;
                     img.alt = file.name;
                     imageContainer.appendChild(img);
+                    
+                    // Display the file name below the image
+                    const fileName = document.createElement("p");
+                    fileName.className = "file-name";
+                    fileName.textContent = file.name;
+                    imageContainer.appendChild(fileName);
                 } else {
+                    // Display a link if the uploaded file is not an image
                     const link = document.createElement("a");
                     link.href = data.url;
                     link.textContent = `View ${file.name}`;
