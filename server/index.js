@@ -27,18 +27,22 @@ let users = {};
 // Serve the static files for the chat interface
 app.use(express.static(__dirname + "/../public"));
 
-// Socket.io connection for real-time chat
+// Inside your server's socket.io "connection" handler
 io.on("connection", (socket) => {
   console.log("A user connected:", socket.id);
 
-  // Listen for the 'set-username' event from the client
+  
+
+  // Handle the set-username event
   socket.on("set-username", (username) => {
       users[socket.id] = username;
-      io.emit("user-status", { username: username, status: "joined" });
-      console.log(`${username} connected`);
+      io.emit("user-status", { username, status: "joined" });
       socket.emit("your-username", username);
   });
-
+  socket.on('welcome', () => {
+    const welcomeMessage = "Hello! Thank you for checking out my website. Feel free to upload a PDF file that you want to discuss, and I’ll help analyze it for you!";
+    socket.emit('ai-message', { content: welcomeMessage });
+});
 
 // Listen for 'message' event from the client (text input)
 socket.on("message", async (message) => {
@@ -58,16 +62,15 @@ socket.on("message", async (message) => {
 });
 
 
-  // Handle disconnection
-  socket.on("disconnect", () => {
-    const username = users[socket.id];
-    if (username) {
-        io.emit("user-status", { username: username, status: "left" });
-        console.log(`${username} disconnected`);
-        delete users[socket.id];
-    }
+// Handle user disconnect
+socket.on("disconnect", () => {
+  const username = users[socket.id];
+  io.emit("user-status", { username, status: "left" });
+  delete users[socket.id];
 });
 });
+
+
 // Handle file upload (text, image, or PDF)
 app.post("/upload", upload.single("file"), async (req, res) => {
   if (req.file) {
@@ -102,7 +105,7 @@ app.post("/upload", upload.single("file"), async (req, res) => {
 async function getOpenAIResponse(input, type) {
   let prompt;
   if (type === "text") {
-    prompt = `Respond to the following message as if you are Shakespeare:\nUser message: ${input}`;
+    prompt = `Respond to the following message as if you are a good helpful friend:\nUser message: ${input}`;
   } else if (type === "pdf") {
     prompt = `Summarize the following PDF content with concise paragraphs. Separate different topics or sections with new lines to make it easy to read in the chat:\n${input}`;
   } else if (type === "image") {

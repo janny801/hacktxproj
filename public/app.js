@@ -39,13 +39,16 @@ socket.on('ai-message', (data) => {
     messageList.scrollTop = messageList.scrollHeight; // Auto-scroll to the bottom
 });
 
-// Function to set up the username
+// Set up the username and trigger welcome message
 usernameSubmit.addEventListener("click", () => {
     const enteredUsername = usernameInput.value.trim();
     if (enteredUsername) {
         username = enteredUsername; // Store the username locally
         socket.emit("set-username", username);
         
+        // Emit welcome event to trigger the welcome message from AI
+        socket.emit("welcome");
+
         // Hide the username overlay directly
         usernameOverlay.style.display = "none";
 
@@ -54,16 +57,6 @@ usernameSubmit.addEventListener("click", () => {
         sendButton.disabled = false;
     } else {
         alert("Please enter a username.");
-    }
-});
-
-// Listen for the username confirmation from the server and hide the overlay
-socket.on("your-username", (confirmedUsername) => {
-    if (confirmedUsername) {
-        username = confirmedUsername; // Confirm the username
-        usernameOverlay.style.display = "none"; // Hide the overlay
-        messageInput.disabled = false; // Enable message input
-        sendButton.disabled = false; // Enable send button
     }
 });
 
@@ -78,7 +71,7 @@ sendButton.addEventListener('click', () => {
         messageList.scrollTop = messageList.scrollHeight; // Auto-scroll to the bottom
 
         // Send the message data to the server with sender information
-        socket.emit('message', { sender: username, content: message });
+        socket.emit('message', message);
         messageInput.value = '';
     }
 });
@@ -94,15 +87,6 @@ socket.on('user-message', (data) => {
         li.classList.add("ai-message");
     }
     li.innerHTML = `${data.sender}: ${data.content}`;
-    messageList.appendChild(li);
-    messageList.scrollTop = messageList.scrollHeight; // Auto-scroll to the bottom
-});
-
-// Listen for join/leave status messages from the server
-socket.on('user-status', (data) => {
-    const li = document.createElement('li');
-    li.classList.add("status-message"); // Apply centered styling for join/leave messages
-    li.textContent = `${data.username} has ${data.status} the chat`;
     messageList.appendChild(li);
     messageList.scrollTop = messageList.scrollHeight; // Auto-scroll to the bottom
 });
@@ -129,7 +113,7 @@ dropZone.addEventListener("dragover", (e) => {
 dropZone.addEventListener("dragleave", (e) => {
     e.preventDefault();
     dropZone.classList.remove("drag-over"); // Remove darkened effect
-    setPlaceholderText("Upload image here"); // Revert text when leaving
+    setPlaceholderText("Upload PDF here"); // Revert text when leaving
 });
 
 // Handle drop events
