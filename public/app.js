@@ -39,7 +39,7 @@ socket.on('message', (message) => {
 
 // Drag and Drop File Upload
 const dropZone = document.getElementById("drop-zone");
-const messageList = document.querySelector("ul"); // Renamed 'ul' to 'messageList'
+const messageList = document.querySelector("ul");
 
 // Prevent default browser behavior for drag-and-drop events at the document level
 document.addEventListener("dragover", (e) => {
@@ -71,11 +71,28 @@ document.addEventListener("drop", (e) => {
             method: "POST",
             body: formData
         })
-        .then(response => response.text())
-        .then(message => {
-            // Update the message once the file is successfully uploaded
-            li.textContent = `Uploaded: ${file.name}`;
-            console.log(message);
+        .then(response => response.json())  // Expecting JSON with file URL
+        .then(data => {
+            if (data.url) {  // Server response with the file URL
+                li.textContent = `Uploaded: ${file.name}`;
+
+                // Display the image if the file is an image
+                if (file.type.startsWith("image/")) {
+                    const img = document.createElement("img");
+                    img.src = data.url;
+                    img.alt = file.name;
+                    img.style.maxWidth = "200px";  // Adjust size as needed
+                    messageList.appendChild(img);
+                } else {
+                    const link = document.createElement("a");
+                    link.href = data.url;
+                    link.textContent = `View ${file.name}`;
+                    link.target = "_blank";  // Open in a new tab
+                    messageList.appendChild(link);
+                }
+            } else {
+                li.textContent = `Failed to upload: ${file.name}`;
+            }
         })
         .catch(error => {
             console.error("File upload failed:", error);
