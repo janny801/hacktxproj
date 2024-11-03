@@ -33,10 +33,10 @@ io.on("connection", (socket) => {
 
   // Listen for the 'set-username' event from the client
   socket.on("set-username", (username) => {
-    users[socket.id] = username; // Store the username with the socket ID
-    io.emit("message", `${username} has joined the chat`);
-    console.log(`${username} connected`);
-    socket.emit("your-username", username);
+      users[socket.id] = username;
+      io.emit("user-status", { username: username, status: "joined" });
+      console.log(`${username} connected`);
+      socket.emit("your-username", username);
   });
 
 
@@ -61,12 +61,13 @@ socket.on("message", async (message) => {
   // Handle disconnection
   socket.on("disconnect", () => {
     const username = users[socket.id];
-    console.log(`${username} disconnected`);
-    io.emit("message", `${username} has left the chat`);
-    delete users[socket.id];
-  });
+    if (username) {
+        io.emit("user-status", { username: username, status: "left" });
+        console.log(`${username} disconnected`);
+        delete users[socket.id];
+    }
 });
-
+});
 // Handle file upload (text, image, or PDF)
 app.post("/upload", upload.single("file"), async (req, res) => {
   if (req.file) {

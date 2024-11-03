@@ -69,10 +69,6 @@ body {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
-
-
-
-
 /* Input and Button */
 form {
     display: flex;
@@ -329,7 +325,6 @@ button:hover {
     max-width: 60%;
     align-self: flex-start; /* Left-align AI messages */
 }
-
 
 /* Centered style for join/leave messages */
 .status-message {

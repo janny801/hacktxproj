@@ -98,10 +98,19 @@ socket.on('user-message', (data) => {
     messageList.scrollTop = messageList.scrollHeight; // Auto-scroll to the bottom
 });
 
+// Listen for join/leave status messages from the server
+socket.on('user-status', (data) => {
+    const li = document.createElement('li');
+    li.classList.add("status-message"); // Apply centered styling for join/leave messages
+    li.textContent = `${data.username} has ${data.status} the chat`;
+    messageList.appendChild(li);
+    messageList.scrollTop = messageList.scrollHeight; // Auto-scroll to the bottom
+});
+
 // Drag and Drop File Upload
 const placeholderText = document.createElement("p");
 placeholderText.className = "placeholder";
-placeholderText.textContent = "Upload image here";
+placeholderText.textContent = "Upload PDF here";
 fileContainer.appendChild(placeholderText);
 
 // Function to update placeholder text
@@ -113,7 +122,7 @@ function setPlaceholderText(text) {
 dropZone.addEventListener("dragover", (e) => {
     e.preventDefault();
     dropZone.classList.add("drag-over"); // Darken the image section
-    setPlaceholderText("Drop your image here"); // Change text when hovering
+    setPlaceholderText("Drop your PDF here"); // Change text when hovering
 });
 
 // Handle drag leave events
@@ -127,7 +136,7 @@ dropZone.addEventListener("dragleave", (e) => {
 dropZone.addEventListener("drop", (e) => {
     e.preventDefault();
     dropZone.classList.remove("drag-over"); // Remove darkened effect
-    setPlaceholderText("Upload image here"); // Reset text after drop
+    setPlaceholderText("Upload PDF here"); // Reset text after drop
 
     const files = e.dataTransfer.files;
     if (files.length) {
