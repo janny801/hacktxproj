@@ -39,7 +39,8 @@ socket.on('message', (message) => {
 
 // Drag and Drop File Upload
 const dropZone = document.getElementById("drop-zone");
-const messageList = document.querySelector("ul");
+const messageList = document.getElementById("message-list");
+const imageContainer = document.getElementById("image-container");
 
 // Prevent default browser behavior for drag-and-drop events at the document level
 document.addEventListener("dragover", (e) => {
@@ -76,19 +77,19 @@ document.addEventListener("drop", (e) => {
             if (data.url) {  // Server response with the file URL
                 li.textContent = `Uploaded: ${file.name}`;
 
-                // Display the image if the file is an image
+                // Clear any previous image and display the new one
+                imageContainer.innerHTML = ''; // Remove existing image/link
                 if (file.type.startsWith("image/")) {
                     const img = document.createElement("img");
                     img.src = data.url;
                     img.alt = file.name;
-                    img.style.maxWidth = "200px";  // Adjust size as needed
-                    messageList.appendChild(img);
+                    imageContainer.appendChild(img);
                 } else {
                     const link = document.createElement("a");
                     link.href = data.url;
                     link.textContent = `View ${file.name}`;
-                    link.target = "_blank";  // Open in a new tab
-                    messageList.appendChild(link);
+                    link.target = "_blank";
+                    imageContainer.appendChild(link);
                 }
             } else {
                 li.textContent = `Failed to upload: ${file.name}`;
