@@ -46,8 +46,9 @@ io.on("connection", (socket) => {
     io.emit("message", `${username} said: ${message}`);
 
     try {
+      io.emit("thinking"); // Emit "thinking" event to show the spinner on the client
       const response = await getOpenAIResponse(message, "text");
-      io.emit("message", response);
+      io.emit("response", response); // Emit "response" event with the AI's response
     } catch (error) {
       handleError(error, io, "text");
     }
@@ -70,19 +71,18 @@ app.post("/upload", upload.single("file"), async (req, res) => {
     io.emit("message", `File uploaded: ${fileUrl}`);
 
     try {
+      io.emit("thinking"); // Show spinner for file uploads as well
+
       let responseMessage;
-      
       if (req.file.mimetype === "application/pdf") {
-        // If PDF, extract text and send to OpenAI API with Shakespearean summarization prompt
         const dataBuffer = fs.readFileSync(filePath);
         const pdfData = await pdfParse(dataBuffer);
         responseMessage = await getOpenAIResponse(pdfData.text, "pdf");
       } else {
-        // Other files (like images), send the file path to OpenAI API with image description prompt
         responseMessage = await getOpenAIResponse(filePath, "image");
       }
 
-      io.emit("message", responseMessage);
+      io.emit("response", responseMessage); // Emit "response" with AI's response
       res.json({ url: fileUrl });
     } catch (error) {
       handleError(error, io, req.file.mimetype === "application/pdf" ? "pdf" : "image");

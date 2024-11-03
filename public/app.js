@@ -10,6 +10,32 @@ const messageList = document.getElementById('message-list');
 const dropZone = document.getElementById("image-section");
 const fileContainer = document.getElementById("image-container");
 const usernameOverlay = document.getElementById("username-overlay");
+const loadingSpinner = document.createElement('div');
+loadingSpinner.classList.add('spinner');
+loadingSpinner.innerHTML = '<div class="lds-dual-ring"></div>';
+document.body.appendChild(loadingSpinner); // Add spinner to the body
+
+// Hide the spinner by default
+loadingSpinner.style.display = 'none';
+
+// Show spinner on 'thinking' event
+socket.on('thinking', () => {
+    console.log("OpenAI is thinking...");
+    loadingSpinner.style.display = 'block'; // Show spinner
+});
+
+// Hide spinner on 'response' event and display the message
+socket.on('response', (message) => {
+    console.log("OpenAI has responded:", message);
+    loadingSpinner.style.display = 'none'; // Hide spinner
+
+    const li = document.createElement('li');
+    li.innerHTML = message.replace(/\n/g, '<br>');
+    messageList.appendChild(li);
+});
+
+// Rest of your app.js code for handling message input, file uploads, etc.
+
 
 // Function to set up the username
 usernameSubmit.addEventListener("click", () => {
