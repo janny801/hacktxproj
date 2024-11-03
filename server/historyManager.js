@@ -21,6 +21,8 @@ function addMessageToHistory(userId, message) {
     if (chatHistory[userId].length > maxHistoryLength) {
         chatHistory[userId].shift(); // Remove the oldest message
     }
+    console.log(`addMessageToHistory(${userId}, ${JSON.stringify(message)}) called`);
+    console.log("Updated chat history:", JSON.stringify(chatHistory[userId], null, 2));
 }
 
 async function addFileToHistory(userId, filePath) {
@@ -30,8 +32,7 @@ async function addFileToHistory(userId, filePath) {
 
     const fileName = path.basename(filePath);
     const fileUrl = `/uploads/${fileName}`;
-    
-    // Check if the file is a PDF and extract content if so
+
     if (filePath.endsWith(".pdf")) {
         try {
             const dataBuffer = fs.readFileSync(filePath);
@@ -42,6 +43,7 @@ async function addFileToHistory(userId, filePath) {
                 sender: "User",
                 content: `Uploaded file: ${fileUrl} \nExtracted Content:\n${fileContent}`
             });
+            console.log(`addFileToHistory(${userId}, ${filePath}): PDF content added`);
         } catch (error) {
             console.error("Error parsing PDF file:", error);
             chatHistory[userId].push({
@@ -60,14 +62,17 @@ async function addFileToHistory(userId, filePath) {
     if (chatHistory[userId].length > maxHistoryLength) {
         chatHistory[userId].shift(); // Remove the oldest message
     }
+    console.log("Chat history after adding file:", JSON.stringify(chatHistory[userId], null, 2));
 }
 
 function getChatHistory(userId) {
+    console.log("Current chat history for user:", JSON.stringify(chatHistory[userId] || [], null, 2));
     return chatHistory[userId] || [];
 }
 
 function clearChatHistory(userId) {
     delete chatHistory[userId];
+    console.log(`Chat history cleared for user ${userId}`);
 }
 
 module.exports = { addMessageToHistory, addFileToHistory, getChatHistory, clearChatHistory };

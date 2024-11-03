@@ -75,34 +75,42 @@ io.on("connection", (socket) => {
     });
 });
 
+const TOKEN_LIMIT = 1000; // Set token limit
+
 app.post("/upload", upload.single("file"), async (req, res) => {
     if (req.file) {
         const fileUrl = `/uploads/${req.file.filename}`;
         const filePath = req.file.path;
+        const socketId = req.headers["socket-id"]; // Retrieve socket-id from headers
+
         io.emit("message", `File uploaded: ${fileUrl}`);
+        console.log(`File uploaded: ${fileUrl}`);
 
         try {
             io.emit("thinking");
 
+            // Check if the uploaded file is a PDF based on MIME type
             if (req.file.mimetype === "application/pdf") {
                 const dataBuffer = fs.readFileSync(filePath);
                 const pdfData = await pdfParse(dataBuffer);
 
-                const concatenatedPdfText = pdfData.text.replace(/\n+/g, " ");
-                addMessageToHistory(req.file.filename, { sender: "User", content: concatenatedPdfText, type: "pdf-content" });
-                console.log(`addMessageToHistory(req.file.filename, { sender: "User", content: concatenatedPdfText }) = { sender: "User", content: "${concatenatedPdfText}" }`);
-                console.log("Chat history after adding concatenated PDF content as User message:", getChatHistory(req.file.filename));
+                // Limit PDF content to a manageable token size
+                let concatenatedPdfText = pdfData.text.replace(/\n+/g, " ");
+                const estimatedTokens = Math.ceil(concatenatedPdfText.length / 4);
+                
+                if (estimatedTokens > TOKEN_LIMIT) {
+                    concatenatedPdfText = concatenatedPdfText.substring(0, TOKEN_LIMIT * 4);
+                    console.log(`PDF content truncated to fit within token limit of ${TOKEN_LIMIT} tokens.`);
+                }
+
+                addMessageToHistory(socketId, { sender: "User", content: concatenatedPdfText, type: "pdf-content" });
+                console.log(`addMessageToHistory(socketId, { sender: "User", content: concatenatedPdfText })`);
 
                 const responseMessage = await getOpenAIResponse(concatenatedPdfText, "pdf");
-
                 const formattedResponseMessage = responseMessage.replace(/(\. )/g, ".\n");
 
-                addMessageToHistory(req.file.filename, { sender: "AI", content: responseMessage, type: "pdf-summary" });
-                console.log(`addMessageToHistory(req.file.filename, { sender: "AI", content: responseMessage }) = { sender: "AI", content: "${responseMessage}" }`);
-                console.log("Chat history after adding AI response:");
-                getChatHistory(req.file.filename).forEach((message, index) => {
-                    console.log(`Message ${index + 1}:`, JSON.stringify(message, null, 2));
-                });
+                addMessageToHistory(socketId, { sender: "AI", content: responseMessage, type: "pdf-summary" });
+                console.log(`addMessageToHistory(socketId, { sender: "AI", content: responseMessage })`);
 
                 // Emit the response with a small delay to ensure proper processing
                 setTimeout(() => {
@@ -111,11 +119,13 @@ app.post("/upload", upload.single("file"), async (req, res) => {
 
                 res.json({ url: fileUrl });
             } else {
+                console.log("Uploaded file is not a PDF. Skipping PDF-specific processing.");
                 const responseMessage = await getOpenAIResponse(filePath, "image");
                 io.emit("ai-message", { sender: "AI", content: responseMessage });
                 res.json({ url: fileUrl });
             }
         } catch (error) {
+            console.error("Error processing file:", error);
             handleError(error, io, req.file.mimetype === "application/pdf" ? "pdf" : "image");
             res.status(500).json({ error: "Error processing file" });
         }
