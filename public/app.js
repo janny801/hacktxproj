@@ -131,14 +131,20 @@ imageSection.addEventListener("drop", (e) => {
 // Function to render PDF using PDF.js
 function renderPDF(url) {
     const canvas = document.createElement("canvas");
+    imageContainer.innerHTML = ''; // Clear previous content
     imageContainer.appendChild(canvas);
     const context = canvas.getContext("2d");
 
     pdfjsLib.getDocument(url).promise.then((pdfDoc) => {
         pdfDoc.getPage(1).then((page) => {
-            const viewport = page.getViewport({ scale: 1.5 });
+            const viewport = page.getViewport({ scale: 1.2 }); // Adjust scale to fit
+
+            // Set canvas dimensions to fit the container
             canvas.width = viewport.width;
             canvas.height = viewport.height;
+            canvas.style.maxWidth = "100%";
+            canvas.style.maxHeight = "100%";
+            canvas.style.border = "1px solid #ccc"; // Optional border for clarity
 
             const renderContext = {
                 canvasContext: context,
@@ -146,5 +152,8 @@ function renderPDF(url) {
             };
             page.render(renderContext);
         });
+    }).catch((error) => {
+        console.error("Error rendering PDF:", error);
+        imageContainer.innerHTML = `<p>Failed to load PDF.</p>`;
     });
 }
