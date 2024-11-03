@@ -338,3 +338,15 @@ button:hover {
     margin: 5px 0;
     max-width: 60%;
 }
+
+
+/* Centered style for join/leave messages */
+.status-message {
+    text-align: center;
+    font-style: italic;
+    color: #aaaaaa;
+    margin: 10px 0;
+    background: none;
+    border: none;
+    font-size: 0.9em;
+}

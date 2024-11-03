@@ -15,6 +15,9 @@ loadingSpinner.classList.add('spinner');
 loadingSpinner.innerHTML = '<div class="lds-dual-ring"></div>';
 document.body.appendChild(loadingSpinner); // Add spinner to the body
 
+// Variable to store the username locally
+let username = "";
+
 // Hide the spinner by default
 loadingSpinner.style.display = 'none';
 
@@ -24,7 +27,7 @@ socket.on('thinking', () => {
     loadingSpinner.style.display = 'block'; // Show spinner
 });
 
-// Hide spinner on 'ai-message' event and display the AI's response
+// Hide spinner on 'response' event and display the message as AI response
 socket.on('ai-message', (data) => {
     console.log("AI has responded:", data.content);
     loadingSpinner.style.display = 'none'; // Hide spinner
@@ -38,15 +41,13 @@ socket.on('ai-message', (data) => {
 
 // Function to set up the username
 usernameSubmit.addEventListener("click", () => {
-    console.log("Submit button clicked");
-    const username = usernameInput.value.trim();
-    if (username) {
+    const enteredUsername = usernameInput.value.trim();
+    if (enteredUsername) {
+        username = enteredUsername; // Store the username locally
         socket.emit("set-username", username);
-        console.log("Username entered:", username);
         
         // Hide the username overlay directly
         usernameOverlay.style.display = "none";
-        console.log("Hiding the overlay...");
 
         // Enable the message input and send button
         messageInput.disabled = false;
@@ -57,12 +58,12 @@ usernameSubmit.addEventListener("click", () => {
 });
 
 // Listen for the username confirmation from the server and hide the overlay
-socket.on("your-username", (username) => {
-    if (username) {
-        console.log("Received confirmation for username:", username);
-        usernameOverlay.style.display = "none"; // Hide the overlay directly
-        messageInput.disabled = false;          // Enable message input
-        sendButton.disabled = false;            // Enable send button
+socket.on("your-username", (confirmedUsername) => {
+    if (confirmedUsername) {
+        username = confirmedUsername; // Confirm the username
+        usernameOverlay.style.display = "none"; // Hide the overlay
+        messageInput.disabled = false; // Enable message input
+        sendButton.disabled = false; // Enable send button
     }
 });
 
@@ -70,23 +71,21 @@ socket.on("your-username", (username) => {
 sendButton.addEventListener('click', () => {
     const message = messageInput.value.trim();
     if (message) {
-        console.log('Sending message:', message);
         const li = document.createElement('li');
         li.classList.add("right-message"); // Apply right-side styling for user messages
-        li.innerHTML = `You: ${message}`;
+        li.innerHTML = `${username}: ${message}`; // Display the username instead of "You"
         messageList.appendChild(li);
         messageList.scrollTop = messageList.scrollHeight; // Auto-scroll to the bottom
 
-        socket.emit('message', message); // Send only to the server
+        socket.emit('message', message);
         messageInput.value = '';
     }
 });
 
-// Listen for messages from other users and append them to the list
-socket.on('other-user-message', (data) => {
-    console.log('Received other user message:', data);
+// Listen for user messages from the server and apply left styling
+socket.on('user-message', (data) => {
     const li = document.createElement('li');
-    li.classList.add("left-message"); // Apply left-side styling for messages
+    li.classList.add("right-message"); // Apply right-side styling for user messages
     li.innerHTML = `${data.sender}: ${data.content}`;
     messageList.appendChild(li);
     messageList.scrollTop = messageList.scrollHeight; // Auto-scroll to the bottom
