@@ -134,8 +134,12 @@ dropZone.addEventListener("drop", (e) => {
         li.textContent = `Uploading: ${file.name}`;
         messageList.appendChild(li);
 
+        // Fetch call with socket ID as a custom header
         fetch("/upload", {
             method: "POST",
+            headers: {
+                "socket-id": socket.id // Pass the socket ID in headers
+            },
             body: formData
         })
         .then(response => response.json())  // Expecting JSON with file URL
@@ -173,6 +177,7 @@ dropZone.addEventListener("drop", (e) => {
         });
     }
 });
+
 
 // Function to render PDF using PDF.js
 function renderPDF(url) {
