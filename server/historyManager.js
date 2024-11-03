@@ -1,9 +1,10 @@
 const fs = require("fs");
 const path = require("path");
+const pdfParse = require("pdf-parse");
 
 const maxHistoryLength = 10;
 const chatHistory = {};
-const uploadsDirectory = path.join(__dirname, "uploads"); // Path to the uploads folder
+const uploadsDirectory = path.join(__dirname, "uploads");
 
 // Ensure the uploads directory exists
 if (!fs.existsSync(uploadsDirectory)) {
@@ -22,13 +23,38 @@ function addMessageToHistory(userId, message) {
     }
 }
 
-function addFileToHistory(userId, filePath) {
+async function addFileToHistory(userId, filePath) {
     if (!chatHistory[userId]) {
         chatHistory[userId] = [];
     }
+
     const fileName = path.basename(filePath);
     const fileUrl = `/uploads/${fileName}`;
-    chatHistory[userId].push({ sender: "User", content: `Uploaded file: ${fileUrl}` });
+    
+    // Check if the file is a PDF and extract content if so
+    if (filePath.endsWith(".pdf")) {
+        try {
+            const dataBuffer = fs.readFileSync(filePath);
+            const pdfData = await pdfParse(dataBuffer);
+            const fileContent = pdfData.text;
+
+            chatHistory[userId].push({
+                sender: "User",
+                content: `Uploaded file: ${fileUrl} \nExtracted Content:\n${fileContent}`
+            });
+        } catch (error) {
+            console.error("Error parsing PDF file:", error);
+            chatHistory[userId].push({
+                sender: "User",
+                content: `Uploaded file: ${fileUrl} (could not extract content)`
+            });
+        }
+    } else {
+        chatHistory[userId].push({
+            sender: "User",
+            content: `Uploaded file: ${fileUrl} (non-PDF file)`
+        });
+    }
 
     // Limit the history size
     if (chatHistory[userId].length > maxHistoryLength) {
@@ -45,5 +71,3 @@ function clearChatHistory(userId) {
 }
 
 module.exports = { addMessageToHistory, addFileToHistory, getChatHistory, clearChatHistory };
-
-
