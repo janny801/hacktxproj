@@ -5,7 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat Room</title>
+    
+    <!-- Include Socket.IO library -->
     <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    
+    <!-- Include PDF.js library from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+    
+    <!-- Include the main application JavaScript file -->
     <script defer src="app.js"></script>
 </head>
 <body>
@@ -15,14 +22,14 @@
         <!-- Chat Section -->
         <div class="chat-section">
             <ul id="message-list"></ul>
-            <input id="message-input" placeholder="message">
+            <input id="message-input" placeholder="Type a message">
             <button id="send-button">Send</button>
 
             <!-- Drag and Drop Zone for file upload -->
             <div id="drop-zone">Drag and drop a file here</div>
         </div>
 
-        <!-- Single Image Display Section -->
+        <!-- Single Image or PDF Display Section -->
         <div class="image-section" id="image-section">
             <div id="image-container"></div>
         </div>

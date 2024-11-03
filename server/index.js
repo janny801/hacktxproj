@@ -99,7 +99,7 @@ async function getOpenAIResponse(input, type) {
   if (type === "text") {
     prompt = `Respond to the following message as if you are Shakespeare:\nUser message: ${input}`;
   } else if (type === "pdf") {
-    prompt = `Summarize the following PDF content. occasionally skip lines in order to keep the chat looking clean:\n${input}`;
+    prompt = `Summarize the following PDF content. Use new lines (\\n) between topics or after every few sentences to make the summary easy to read:\n${input}`;
   } else if (type === "image") {
     prompt = "Describe the contents of this image in a detailed Shakespearean manner.";
   }

@@ -95,7 +95,6 @@ imageSection.addEventListener("drop", (e) => {
                 // Clear the image container and remove placeholder text
                 imageContainer.innerHTML = ''; // Clear previous content
                 
-                // Display the image
                 if (file.type.startsWith("image/")) {
                     const img = document.createElement("img");
                     img.src = data.url;
@@ -104,26 +103,14 @@ imageSection.addEventListener("drop", (e) => {
                     img.style.maxHeight = "100%";
                     imageContainer.appendChild(img);
                     
-                    // Display the file name below the image
                     const fileName = document.createElement("p");
                     fileName.className = "file-name";
                     fileName.textContent = file.name;
                     imageContainer.appendChild(fileName);
                 } else if (file.type === "application/pdf") {
-                    // Display the PDF in an iframe if it's a PDF
-                    const iframe = document.createElement("iframe");
-                    iframe.src = data.url;
-                    iframe.width = "100%";
-                    iframe.height = "100%";
-                    imageContainer.appendChild(iframe);
-
-                    // Display the file name below the PDF viewer
-                    const fileName = document.createElement("p");
-                    fileName.className = "file-name";
-                    fileName.textContent = file.name;
-                    imageContainer.appendChild(fileName);
+                    // Render PDF using PDF.js
+                    renderPDF(data.url);
                 } else {
-                    // Display a link if the uploaded file is not an image or PDF
                     const link = document.createElement("a");
                     link.href = data.url;
                     link.textContent = `View ${file.name}`;
@@ -140,3 +127,24 @@ imageSection.addEventListener("drop", (e) => {
         });
     }
 });
+
+// Function to render PDF using PDF.js
+function renderPDF(url) {
+    const canvas = document.createElement("canvas");
+    imageContainer.appendChild(canvas);
+    const context = canvas.getContext("2d");
+
+    pdfjsLib.getDocument(url).promise.then((pdfDoc) => {
+        pdfDoc.getPage(1).then((page) => {
+            const viewport = page.getViewport({ scale: 1.5 });
+            canvas.width = viewport.width;
+            canvas.height = viewport.height;
+
+            const renderContext = {
+                canvasContext: context,
+                viewport: viewport,
+            };
+            page.render(renderContext);
+        });
+    });
+}
