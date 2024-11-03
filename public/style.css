@@ -227,8 +227,18 @@ form {
     margin-bottom: 10px;
     width: 80%;
     border-radius: 5px;
-    border: none;
+    border: 1px solid rgba(255, 255, 255, 0.3); /* Subtle, light gray border */
+    background-color: #3e3e3e; /* Match the background color */
+    color: #fff; /* White text color */
+    outline: none; /* Remove default outline */
+    transition: border-color 0.3s; /* Smooth transition for focus effect */
 }
+
+#username-input:focus {
+    border-color: #5a67d8; /* Light blue border on focus */
+}
+
+
 
 #username-submit {
     padding: 10px 20px;
