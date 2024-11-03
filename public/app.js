@@ -49,20 +49,30 @@ placeholderText.className = "placeholder";
 placeholderText.textContent = "Upload image here";
 imageContainer.appendChild(placeholderText);
 
-// Handle drag and drop events to change appearance
-document.addEventListener("dragover", (e) => {
+// Function to update placeholder text
+function setPlaceholderText(text) {
+    placeholderText.textContent = text;
+}
+
+// Handle drag over events
+imageSection.addEventListener("dragover", (e) => {
     e.preventDefault();
     imageSection.classList.add("drag-over"); // Darken the image section
+    setPlaceholderText("Drop your image here"); // Change text when hovering
 });
 
-document.addEventListener("dragleave", (e) => {
+// Handle drag leave events
+imageSection.addEventListener("dragleave", (e) => {
     e.preventDefault();
     imageSection.classList.remove("drag-over"); // Remove darkened effect
+    setPlaceholderText("Upload image here"); // Revert text when leaving
 });
 
-document.addEventListener("drop", (e) => {
+// Handle drop events
+imageSection.addEventListener("drop", (e) => {
     e.preventDefault();
     imageSection.classList.remove("drag-over"); // Remove darkened effect
+    setPlaceholderText("Upload image here"); // Reset text after drop
 
     const files = e.dataTransfer.files;
     if (files.length) {
