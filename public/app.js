@@ -1,54 +1,72 @@
 const socket = io('http://localhost:8080');
 console.log('Connecting to Socket.IO...');
 
-// Prompt the user for their username
-const username = prompt("Enter your username:");
+// Query the DOM for necessary elements
+const usernameInput = document.getElementById("username-input");
+const usernameSubmit = document.getElementById("username-submit");
+const messageInput = document.getElementById("message-input");
+const sendButton = document.getElementById("send-button");
+const messageList = document.getElementById('message-list');
+const dropZone = document.getElementById("image-section");
+const fileContainer = document.getElementById("image-container");
+const usernameOverlay = document.getElementById("username-overlay");
 
-// Emit the username to the server
-socket.emit('set-username', username);
+// Function to set up the username
+usernameSubmit.addEventListener("click", () => {
+    console.log("Submit button clicked");
+    const username = usernameInput.value.trim();
+    if (username) {
+        socket.emit("set-username", username);
+        console.log("Username entered:", username);
+        
+        // Hide the username overlay directly
+        usernameOverlay.style.display = "none";
+        console.log("Hiding the overlay...");
 
-// Display the username of the connected user
-socket.on('your-username', (username) => {
-    const userInfo = document.createElement('p');
-    userInfo.textContent = `You are ${username}`;
-    userInfo.style.color = '#fff';
-    document.body.insertBefore(userInfo, document.querySelector('ul'));
+        // Enable the message input and send button
+        messageInput.disabled = false;
+        sendButton.disabled = false;
+    } else {
+        alert("Please enter a username.");
+    }
 });
 
-// Query the DOM for necessary elements
-const input = document.querySelector('input');
-const button = document.querySelector('button');
-const ul = document.querySelector('ul');
+// Listen for the username confirmation from the server and hide the overlay
+socket.on("your-username", (username) => {
+    if (username) {
+        console.log("Received confirmation for username:", username);
+        usernameOverlay.style.display = "none"; // Hide the overlay directly
+        messageInput.disabled = false;          // Enable message input
+        sendButton.disabled = false;            // Enable send button
+    }
+});
+
+// Rest of your `app.js` code (message sending, file upload, etc.)...
+
+
 
 // Send message when button is clicked
-button.addEventListener('click', () => {
-    const message = input.value;
+sendButton.addEventListener('click', () => {
+    const message = messageInput.value;
     console.log('Sending message:', message);
     socket.emit('message', message);
-    input.value = '';
+    messageInput.value = '';
 });
 
 // Listen for messages from the server and append them to the list
 socket.on('message', (message) => {
     console.log('Received message:', message);
     const li = document.createElement('li');
-    // Replace \n with <br> to ensure line breaks display in HTML
     li.innerHTML = message.replace(/\n/g, '<br>');
-    document.getElementById('message-list').appendChild(li);
+    messageList.appendChild(li);
 });
 
-
-
 // Drag and Drop File Upload
-const imageSection = document.getElementById("image-section");
-const messageList = ul;  // Reuse the existing message list
-const imageContainer = document.getElementById("image-container");
-
 // Add placeholder text initially
 const placeholderText = document.createElement("p");
 placeholderText.className = "placeholder";
 placeholderText.textContent = "Upload image here";
-imageContainer.appendChild(placeholderText);
+fileContainer.appendChild(placeholderText);
 
 // Function to update placeholder text
 function setPlaceholderText(text) {
@@ -56,23 +74,23 @@ function setPlaceholderText(text) {
 }
 
 // Handle drag over events
-imageSection.addEventListener("dragover", (e) => {
+dropZone.addEventListener("dragover", (e) => {
     e.preventDefault();
-    imageSection.classList.add("drag-over"); // Darken the image section
+    dropZone.classList.add("drag-over"); // Darken the image section
     setPlaceholderText("Drop your image here"); // Change text when hovering
 });
 
 // Handle drag leave events
-imageSection.addEventListener("dragleave", (e) => {
+dropZone.addEventListener("dragleave", (e) => {
     e.preventDefault();
-    imageSection.classList.remove("drag-over"); // Remove darkened effect
+    dropZone.classList.remove("drag-over"); // Remove darkened effect
     setPlaceholderText("Upload image here"); // Revert text when leaving
 });
 
 // Handle drop events
-imageSection.addEventListener("drop", (e) => {
+dropZone.addEventListener("drop", (e) => {
     e.preventDefault();
-    imageSection.classList.remove("drag-over"); // Remove darkened effect
+    dropZone.classList.remove("drag-over"); // Remove darkened effect
     setPlaceholderText("Upload image here"); // Reset text after drop
 
     const files = e.dataTransfer.files;
@@ -95,8 +113,8 @@ imageSection.addEventListener("drop", (e) => {
             if (data.url) {  // Server response with the file URL
                 li.textContent = `Uploaded: ${file.name}`;
 
-                // Clear the image container and remove placeholder text
-                imageContainer.innerHTML = ''; // Clear previous content
+                // Clear the file container and remove placeholder text
+                fileContainer.innerHTML = ''; // Clear previous content
                 
                 if (file.type.startsWith("image/")) {
                     const img = document.createElement("img");
@@ -104,13 +122,7 @@ imageSection.addEventListener("drop", (e) => {
                     img.alt = file.name;
                     img.style.maxWidth = "100%";
                     img.style.maxHeight = "100%";
-                    imageContainer.appendChild(img);
-                    /*
-                    const fileName = document.createElement("p");
-                    fileName.className = "file-name";
-                    fileName.textContent = file.name; 
-                    imageContainer.appendChild(fileName);
-                    */
+                    fileContainer.appendChild(img);
                 } else if (file.type === "application/pdf") {
                     // Render PDF using PDF.js
                     renderPDF(data.url);
@@ -119,7 +131,7 @@ imageSection.addEventListener("drop", (e) => {
                     link.href = data.url;
                     link.textContent = `View ${file.name}`;
                     link.target = "_blank";
-                    imageContainer.appendChild(link);
+                    fileContainer.appendChild(link);
                 }
             } else {
                 li.textContent = `Failed to upload: ${file.name}`;
@@ -135,8 +147,8 @@ imageSection.addEventListener("drop", (e) => {
 // Function to render PDF using PDF.js
 function renderPDF(url) {
     const canvas = document.createElement("canvas");
-    imageContainer.innerHTML = ''; // Clear previous content
-    imageContainer.appendChild(canvas);
+    fileContainer.innerHTML = ''; // Clear previous content
+    fileContainer.appendChild(canvas);
     const context = canvas.getContext("2d");
 
     pdfjsLib.getDocument(url).promise.then((pdfDoc) => {
@@ -158,6 +170,6 @@ function renderPDF(url) {
         });
     }).catch((error) => {
         console.error("Error rendering PDF:", error);
-        imageContainer.innerHTML = `<p>Failed to load PDF.</p>`;
+        fileContainer.innerHTML = `<p>Failed to load PDF.</p>`;
     });
 }

@@ -16,20 +16,26 @@
     <script defer src="app.js"></script>
 </head>
 <body>
-    <!-- Container to hold chat and image sections side by side -->
+    <!-- Username Overlay Section -->
+    <div id="username-overlay">
+        <div id="username-container">
+            <h2>Enter your Username</h2>
+            <input type="text" id="username-input" placeholder="Enter username">
+            <button id="username-submit">Submit</button>
+        </div>
+    </div>
+
+    <!-- Main Container -->
     <div class="container">
         
         <!-- Chat Section -->
         <div class="chat-section">
             <ul id="message-list"></ul>
-            <input id="message-input" placeholder="Type a message">
-            <button id="send-button">Send</button>
-
-            <!-- Drag and Drop Zone for file upload -->
-            <div id="drop-zone">Drag and drop a file here</div>
+            <input id="message-input" placeholder="Type a message" disabled>
+            <button id="send-button" disabled>Send</button>
         </div>
 
-        <!-- Single Image or PDF Display Section -->
+        <!-- Image Display Section -->
         <div class="image-section" id="image-section">
             <div id="image-container"></div>
         </div>
