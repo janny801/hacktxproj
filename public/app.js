@@ -101,14 +101,14 @@ imageSection.addEventListener("drop", (e) => {
                 if (file.type.startsWith("image/")) {
                     const img = document.createElement("img");
                     img.src = data.url;
-                    img.alt = file.name;
+                    img.alt = req.file.filename; //set file name as alt text
                     img.style.maxWidth = "100%";
                     img.style.maxHeight = "100%";
                     imageContainer.appendChild(img);
                     
                     const fileName = document.createElement("p");
                     fileName.className = "file-name";
-                    fileName.textContent = file.name;
+                    fileName.textContent = req.file.originalname; // display actual file name 
                     imageContainer.appendChild(fileName);
                 } else if (file.type === "application/pdf") {
                     // Render PDF using PDF.js
