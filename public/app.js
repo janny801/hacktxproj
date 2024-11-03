@@ -24,18 +24,17 @@ socket.on('thinking', () => {
     loadingSpinner.style.display = 'block'; // Show spinner
 });
 
-// Hide spinner on 'response' event and display the message
-socket.on('response', (message) => {
-    console.log("OpenAI has responded:", message);
+// Hide spinner on 'ai-message' event and display the AI's response
+socket.on('ai-message', (data) => {
+    console.log("AI has responded:", data.content);
     loadingSpinner.style.display = 'none'; // Hide spinner
 
     const li = document.createElement('li');
-    li.innerHTML = message.replace(/\n/g, '<br>');
+    li.classList.add("left-message"); // Apply left-side styling for AI messages
+    li.innerHTML = data.content.replace(/\n/g, '<br>');
     messageList.appendChild(li);
+    messageList.scrollTop = messageList.scrollHeight; // Auto-scroll to the bottom
 });
-
-// Rest of your app.js code for handling message input, file uploads, etc.
-
 
 // Function to set up the username
 usernameSubmit.addEventListener("click", () => {
@@ -67,28 +66,33 @@ socket.on("your-username", (username) => {
     }
 });
 
-// Rest of your `app.js` code (message sending, file upload, etc.)...
-
-
-
 // Send message when button is clicked
 sendButton.addEventListener('click', () => {
-    const message = messageInput.value;
-    console.log('Sending message:', message);
-    socket.emit('message', message);
-    messageInput.value = '';
+    const message = messageInput.value.trim();
+    if (message) {
+        console.log('Sending message:', message);
+        const li = document.createElement('li');
+        li.classList.add("right-message"); // Apply right-side styling for user messages
+        li.innerHTML = `You: ${message}`;
+        messageList.appendChild(li);
+        messageList.scrollTop = messageList.scrollHeight; // Auto-scroll to the bottom
+
+        socket.emit('message', message); // Send only to the server
+        messageInput.value = '';
+    }
 });
 
-// Listen for messages from the server and append them to the list
-socket.on('message', (message) => {
-    console.log('Received message:', message);
+// Listen for messages from other users and append them to the list
+socket.on('other-user-message', (data) => {
+    console.log('Received other user message:', data);
     const li = document.createElement('li');
-    li.innerHTML = message.replace(/\n/g, '<br>');
+    li.classList.add("left-message"); // Apply left-side styling for messages
+    li.innerHTML = `${data.sender}: ${data.content}`;
     messageList.appendChild(li);
+    messageList.scrollTop = messageList.scrollHeight; // Auto-scroll to the bottom
 });
 
 // Drag and Drop File Upload
-// Add placeholder text initially
 const placeholderText = document.createElement("p");
 placeholderText.className = "placeholder";
 placeholderText.textContent = "Upload image here";
@@ -127,6 +131,7 @@ dropZone.addEventListener("drop", (e) => {
 
         // Display the file name in the chat
         const li = document.createElement("li");
+        li.classList.add("right-message"); // Apply right-side styling for user upload messages
         li.textContent = `Uploading: ${file.name}`;
         messageList.appendChild(li);
 

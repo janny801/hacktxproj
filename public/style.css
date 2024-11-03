@@ -315,3 +315,26 @@ button:hover {
         transform: rotate(360deg);
     }
 }
+
+
+/* Style for user messages */
+.user-message {
+    background-color: gray;
+    align-self: flex-end;
+    color: #fff;
+    padding: 10px;
+    border-radius: 10px;
+    margin: 5px 0;
+    max-width: 60%;
+}
+
+/* Style for AI messages */
+.ai-message {
+    background-color: #4c51bf;
+    align-self: flex-start;
+    color: #fff;
+    padding: 10px;
+    border-radius: 10px;
+    margin: 5px 0;
+    max-width: 60%;
+}

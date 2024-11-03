@@ -39,20 +39,24 @@ io.on("connection", (socket) => {
     socket.emit("your-username", username);
   });
 
-  // Listen for 'message' event from the client (text input)
-  socket.on("message", async (message) => {
-    const username = users[socket.id];
-    console.log(`Message received from ${username}:`, message);
-    io.emit("message", `${username} said: ${message}`);
 
-    try {
+// Listen for 'message' event from the client (text input)
+socket.on("message", async (message) => {
+  const username = users[socket.id];
+  console.log(`Message received from ${username}:`, message);
+
+  // Emit the user message to other clients only
+  socket.broadcast.emit("other-user-message", { sender: username, content: message });
+
+  try {
       io.emit("thinking"); // Emit "thinking" event to show the spinner on the client
       const response = await getOpenAIResponse(message, "text");
-      io.emit("response", response); // Emit "response" event with the AI's response
-    } catch (error) {
+      io.emit("ai-message", { content: response }); // Emit AI response to all clients
+  } catch (error) {
       handleError(error, io, "text");
-    }
-  });
+  }
+});
+
 
   // Handle disconnection
   socket.on("disconnect", () => {
@@ -82,7 +86,7 @@ app.post("/upload", upload.single("file"), async (req, res) => {
         responseMessage = await getOpenAIResponse(filePath, "image");
       }
 
-      io.emit("response", responseMessage); // Emit "response" with AI's response
+      io.emit("ai-message", { sender: "AI", content: responseMessage }); // AI's response
       res.json({ url: fileUrl });
     } catch (error) {
       handleError(error, io, req.file.mimetype === "application/pdf" ? "pdf" : "image");
