@@ -21,7 +21,6 @@ body {
     gap: 20px;
 }
 
-/* Chat Section */
 .chat-section {
     flex: 1;
     display: flex;
@@ -32,6 +31,7 @@ body {
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     overflow: hidden;
+    min-height: 80vh; /* Set an initial height that covers most of the vertical space */
 }
 
 /* Style for the chat message list */
@@ -39,7 +39,7 @@ body {
     list-style-type: none;
     padding: 0;
     width: 100%;
-    height: 300px;
+    height: 100%; /* Fill available height */
     overflow-y: auto;
     border: 1px solid #444;
     border-radius: 5px;
@@ -49,8 +49,9 @@ body {
     color: #fff;
     resize: both; /* Enable resizing in both directions */
     min-width: 200px;
-    min-height: 100px;
+    min-height: 300px; /* Set a minimum height */
 }
+
 
 /* Style for individual chat messages */
 #message-list li {
@@ -82,7 +83,6 @@ input {
     border-radius: 5px;
     margin-right: 10px;
 }
-
 
 /* Style the send button */
 button {
@@ -192,7 +192,6 @@ form {
     color: #aaa;
     text-align: center;
 }
-
 
 /* Overlay styling */
 #username-overlay {
