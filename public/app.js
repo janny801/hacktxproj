@@ -41,12 +41,12 @@ socket.on('message', (message) => {
 // Drag and Drop File Upload
 const dropZone = document.getElementById("drop-zone");
 
-dropZone.addEventListener("dragover", (e) => {
+document.addEventListener("dragover", (e) => {
     e.preventDefault();
     dropZone.classList.add("drag-over");
 });
 
-dropZone.addEventListener("dragleave", () => {
+document.addEventListener("dragleave", (e) => {
     dropZone.classList.remove("drag-over");
 });
 
@@ -68,7 +68,7 @@ dropZone.addEventListener("drop", (e) => {
             console.log(message);
             const li = document.createElement("li");
             li.textContent = message;
-            ul.appendChild(li);
+            document.querySelector("ul").appendChild(li);
         })
         .catch(error => console.error("File upload failed:", error));
     }
