@@ -38,24 +38,26 @@ socket.on('message', (message) => {
 
 
 // Drag and Drop File Upload
+
 const dropZone = document.getElementById("drop-zone");
 const messageList = document.getElementById("message-list");
+const imageSection = document.getElementById("image-section");
 const imageContainer = document.getElementById("image-container");
 
 // Prevent default browser behavior for drag-and-drop events at the document level
 document.addEventListener("dragover", (e) => {
     e.preventDefault();
-    dropZone.classList.add("drag-over");
+    imageSection.classList.add("drag-over"); // Darken the image section
 });
 
 document.addEventListener("dragleave", (e) => {
     e.preventDefault();
-    dropZone.classList.remove("drag-over");
+    imageSection.classList.remove("drag-over"); // Remove darkened effect
 });
 
 document.addEventListener("drop", (e) => {
     e.preventDefault();
-    dropZone.classList.remove("drag-over");
+    imageSection.classList.remove("drag-over"); // Remove darkened effect
 
     const files = e.dataTransfer.files;
     if (files.length) {
