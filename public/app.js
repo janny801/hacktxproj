@@ -32,9 +32,12 @@ button.addEventListener('click', () => {
 socket.on('message', (message) => {
     console.log('Received message:', message);
     const li = document.createElement('li');
-    li.textContent = message;
-    ul.appendChild(li);
+    // Replace \n with <br> to ensure line breaks display in HTML
+    li.innerHTML = message.replace(/\n/g, '<br>');
+    document.getElementById('message-list').appendChild(li);
 });
+
+
 
 // Drag and Drop File Upload
 const imageSection = document.getElementById("image-section");
