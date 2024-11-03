@@ -73,7 +73,7 @@ app.post("/upload", upload.single("file"), async (req, res) => {
       let responseMessage;
       
       if (req.file.mimetype === "application/pdf") {
-        // If PDF, extract text and send to OpenAI API with summarization prompt
+        // If PDF, extract text and send to OpenAI API with Shakespearean summarization prompt
         const dataBuffer = fs.readFileSync(filePath);
         const pdfData = await pdfParse(dataBuffer);
         responseMessage = await getOpenAIResponse(pdfData.text, "pdf");
@@ -99,9 +99,9 @@ async function getOpenAIResponse(input, type) {
   if (type === "text") {
     prompt = `Respond to the following message as if you are Shakespeare:\nUser message: ${input}`;
   } else if (type === "pdf") {
-    prompt = `Summarize the following PDF content:\n${input}`;
+    prompt = `Summarize the following PDF content. occasionally skip lines in order to keep the chat looking clean:\n${input}`;
   } else if (type === "image") {
-    prompt = "Describe the contents of this image in detail.";
+    prompt = "Describe the contents of this image in a detailed Shakespearean manner.";
   }
 
   try {

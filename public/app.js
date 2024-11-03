@@ -36,11 +36,9 @@ socket.on('message', (message) => {
     ul.appendChild(li);
 });
 
-
 // Drag and Drop File Upload
-const dropZone = document.getElementById("drop-zone");
-const messageList = document.getElementById("message-list");
 const imageSection = document.getElementById("image-section");
+const messageList = ul;  // Reuse the existing message list
 const imageContainer = document.getElementById("image-container");
 
 // Add placeholder text initially
@@ -102,6 +100,8 @@ imageSection.addEventListener("drop", (e) => {
                     const img = document.createElement("img");
                     img.src = data.url;
                     img.alt = file.name;
+                    img.style.maxWidth = "100%";
+                    img.style.maxHeight = "100%";
                     imageContainer.appendChild(img);
                     
                     // Display the file name below the image
@@ -109,8 +109,21 @@ imageSection.addEventListener("drop", (e) => {
                     fileName.className = "file-name";
                     fileName.textContent = file.name;
                     imageContainer.appendChild(fileName);
+                } else if (file.type === "application/pdf") {
+                    // Display the PDF in an iframe if it's a PDF
+                    const iframe = document.createElement("iframe");
+                    iframe.src = data.url;
+                    iframe.width = "100%";
+                    iframe.height = "100%";
+                    imageContainer.appendChild(iframe);
+
+                    // Display the file name below the PDF viewer
+                    const fileName = document.createElement("p");
+                    fileName.className = "file-name";
+                    fileName.textContent = file.name;
+                    imageContainer.appendChild(fileName);
                 } else {
-                    // Display a link if the uploaded file is not an image
+                    // Display a link if the uploaded file is not an image or PDF
                     const link = document.createElement("a");
                     link.href = data.url;
                     link.textContent = `View ${file.name}`;
