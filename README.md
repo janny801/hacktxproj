@@ -5,8 +5,10 @@ A bare minimum Socket.io implementation. Learn about [Websockets & Socket.io](ht
 ## Run it
 
 ```
+
 cd server
 npm install
+npm install multer 
 npm start
 ```
 
