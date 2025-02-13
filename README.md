@@ -11,7 +11,7 @@ This project was developed as part of the **HackTX 2024 hackathon** by a **team 
 
 ## Technologies Used
 🔧 **Tech Stack**:
-- **Backend**: Node.js, Express, Socket.IO, OpenAI API
+- **Backend**: Node.js, Express.js, Socket.IO, OpenAI API
 - **Frontend**: HTML, CSS, JavaScript
 - **File Handling**: Multer for handling file uploads
 
