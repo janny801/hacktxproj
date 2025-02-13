@@ -35,3 +35,28 @@ npm install multer
 
 # Start the server
 npm start
+
+
+
+## 📌 Usage
+
+1. **Start the Server**  
+   - Follow the setup instructions to install dependencies and run the server.
+
+2. **Upload a PDF File**  
+   - Navigate to the upload section and select a PDF file.
+   - The system will process the document and extract relevant information.
+
+3. **AI-Powered Chat**  
+   - Engage in real-time chat using AI-assisted responses.
+   - Ask questions related to the uploaded PDF for further analysis.
+
+4. **Real-Time Processing**  
+   - The chatbot will analyze the content and provide contextual responses.
+   - Users can ask follow-up questions based on extracted insights.
+
+5. **Multi-User Support**  
+   - Multiple users can interact with the system simultaneously, making it useful for team-based discussions.
+
+This project was built to showcase AI-powered text processing and real-time chat functionality, leveraging OpenAI API, WebSockets, and file handling with Multer.
+
