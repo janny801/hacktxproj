@@ -36,6 +36,7 @@ npm install multer
 # Start the server
 npm start
 
+```
 
 
 ## 📌 Usage
