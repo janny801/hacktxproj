@@ -1,6 +1,7 @@
 # AI Chat and PDF Summarizer (HackTX 2024)
 
-This project was developed as part of the **HackTX 2024 hackathon** by a **team of four**. It is an AI-powered chat and PDF summarization tool that leverages **OpenAI's GPT-4 Turbo API** to provide **real-time AI-assisted responses** and **context-aware PDF parsing**. The goal was to create an interactive system that allows users to engage in live conversations while also uploading and summarizing documents for quick insights.
+This project was developed as part of the **HackTX 2024 hackathon** by a **team of four**. It is an AI-powered chat and PDF summarization tool that leverages **OpenAI's GPT-4 Turbo API** to provide **real-time AI-assisted responses** and **context-aware PDF parsing**. The goal was to create an interactive system that allows users to engage in live conversations while also uploading and summarizing documents for quick insights. This project was built to showcase AI-powered text processing and real-time chat functionality, leveraging OpenAI API, WebSockets, and file handling with Multer.
+
 
 ##  Features
 - **Real-Time AI Chat** – Users can engage in live AI-powered conversations, receiving responses tailored to context.
@@ -59,5 +60,4 @@ npm start
 5. **Multi-User Support**  
    - Multiple users can interact with the system simultaneously, making it useful for team-based discussions.
 
-This project was built to showcase AI-powered text processing and real-time chat functionality, leveraging OpenAI API, WebSockets, and file handling with Multer.
 
